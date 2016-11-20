@@ -1,0 +1,16 @@
+C:\Users\Clockian\Documents\GitHub\Kinect-Project\Kinect-Project\Kinect-Project\bin\Debug\Kinect-Project.exe.config
+C:\Users\Clockian\Documents\GitHub\Kinect-Project\Kinect-Project\Kinect-Project\bin\Debug\Kinect-Project.exe
+C:\Users\Clockian\Documents\GitHub\Kinect-Project\Kinect-Project\Kinect-Project\bin\Debug\Kinect-Project.pdb
+C:\Users\Clockian\Documents\GitHub\Kinect-Project\Kinect-Project\Kinect-Project\bin\Debug\Microsoft.Kinect.dll
+C:\Users\Clockian\Documents\GitHub\Kinect-Project\Kinect-Project\Kinect-Project\bin\Debug\Microsoft.Kinect.xml
+C:\Users\Clockian\Documents\GitHub\Kinect-Project\Kinect-Project\Kinect-Project\obj\Debug\Kinect-Project.csprojResolveAssemblyReference.cache
+C:\Users\Clockian\Documents\GitHub\Kinect-Project\Kinect-Project\Kinect-Project\obj\Debug\MainWindow.g.cs
+C:\Users\Clockian\Documents\GitHub\Kinect-Project\Kinect-Project\Kinect-Project\obj\Debug\App.g.cs
+C:\Users\Clockian\Documents\GitHub\Kinect-Project\Kinect-Project\Kinect-Project\obj\Debug\Kinect-Project_MarkupCompile.cache
+C:\Users\Clockian\Documents\GitHub\Kinect-Project\Kinect-Project\Kinect-Project\obj\Debug\Kinect-Project_MarkupCompile.lref
+C:\Users\Clockian\Documents\GitHub\Kinect-Project\Kinect-Project\Kinect-Project\obj\Debug\MainWindow.baml
+C:\Users\Clockian\Documents\GitHub\Kinect-Project\Kinect-Project\Kinect-Project\obj\Debug\Kinect-Project.g.resources
+C:\Users\Clockian\Documents\GitHub\Kinect-Project\Kinect-Project\Kinect-Project\obj\Debug\Kinect_Project.Properties.Resources.resources
+C:\Users\Clockian\Documents\GitHub\Kinect-Project\Kinect-Project\Kinect-Project\obj\Debug\Kinect-Project.csproj.GenerateResource.Cache
+C:\Users\Clockian\Documents\GitHub\Kinect-Project\Kinect-Project\Kinect-Project\obj\Debug\Kinect-Project.exe
+C:\Users\Clockian\Documents\GitHub\Kinect-Project\Kinect-Project\Kinect-Project\obj\Debug\Kinect-Project.pdb
