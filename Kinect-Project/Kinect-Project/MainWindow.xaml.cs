@@ -30,8 +30,6 @@ namespace Kinect_Project
        // private byte[] colorPixels; //Stores color image frame
        // private DepthImagePixel[] depthPixels; //Stores depth image frame
 
-        
-
         const int SKELETON_COUNT = 6;
         Skeleton[] allSkeletons = new Skeleton[SKELETON_COUNT];
 
@@ -81,13 +79,12 @@ namespace Kinect_Project
                 sensor.AllFramesReady += new EventHandler<AllFramesReadyEventArgs>(Sensor_AllFramesReady);
 
                 //For storing a frame of from color and depth stream
-              //  this.colorPixels = new byte[sensor.ColorStream.FramePixelDataLength];
+                //this.colorPixels = new byte[sensor.ColorStream.FramePixelDataLength];
                 //this.depthPixels = new DepthImagePixel[sensor.DepthStream.FramePixelDataLength];
 
-
                 //Bitmap to store pixel data, here so you only do it once at application start
-               // colorBitmap = new WriteableBitmap(sensor.ColorStream.FrameWidth, sensor.ColorStream.FrameHeight, 96.0, 96.0, PixelFormats.Bgr32, null);
-               // depthBitmap = new WriteableBitmap(sensor.DepthStream.FrameWidth, sensor.DepthStream.FrameHeight, 96.0, 96.0, PixelFormats.Bgr32, null);
+                //colorBitmap = new WriteableBitmap(sensor.ColorStream.FrameWidth, sensor.ColorStream.FrameHeight, 96.0, 96.0, PixelFormats.Bgr32, null);
+                //depthBitmap = new WriteableBitmap(sensor.DepthStream.FrameWidth, sensor.DepthStream.FrameHeight, 96.0, 96.0, PixelFormats.Bgr32, null);
 
                 sensor.Start();
             }
@@ -189,22 +186,14 @@ namespace Kinect_Project
                 {
                     return;
                 }
-                /*
-                DepthImagePoint headDepthPoint = depth.MapFromSkeletonPoint(me.Joints[JointType.Head].Position);
-                DepthImagePoint rHandDepthPoint = depth.MapFromSkeletonPoint(me.Joints[JointType.HandRight].Position);
-                DepthImagePoint lHandDepthPoint = depth.MapFromSkeletonPoint(me.Joints[JointType.HandLeft].Position);
-                DepthImagePoint spineDepthPoint = depth.MapFromSkeletonPoint(me.Joints[JointType.Spine].Position);
 
-                ColorImagePoint headColorPoint = depth.MapToColorImagePoint(headDepthPoint.X, headDepthPoint.Y, ColorImageFormat.RgbResolution640x480Fps30);
-                ColorImagePoint lHandColorPoint = depth.MapToColorImagePoint(lHandDepthPoint.X, lHandDepthPoint.Y, ColorImageFormat.RgbResolution640x480Fps30);
-                ColorImagePoint rHandColorPoint = depth.MapToColorImagePoint(rHandDepthPoint.X, rHandDepthPoint.Y, ColorImageFormat.RgbResolution640x480Fps30);
-                ColorImagePoint spineColorPoint = depth.MapToColorImagePoint(spineDepthPoint.X, spineDepthPoint.Y, ColorImageFormat.RgbResolution640x480Fps30);
-                */
                 DepthImagePoint headDepthPoint = sensor.CoordinateMapper.MapSkeletonPointToDepthPoint(me.Joints[JointType.Head].Position, DepthImageFormat.Resolution640x480Fps30);
                 DepthImagePoint rHandDepthPoint = sensor.CoordinateMapper.MapSkeletonPointToDepthPoint(me.Joints[JointType.HandRight].Position, DepthImageFormat.Resolution640x480Fps30);
                 DepthImagePoint lHandDepthPoint = sensor.CoordinateMapper.MapSkeletonPointToDepthPoint(me.Joints[JointType.HandLeft].Position, DepthImageFormat.Resolution640x480Fps30);
                 DepthImagePoint spineDepthPoint = sensor.CoordinateMapper.MapSkeletonPointToDepthPoint(me.Joints[JointType.Spine].Position, DepthImageFormat.Resolution640x480Fps30);
                 DepthImagePoint ShoulderCenterDepthPoint = sensor.CoordinateMapper.MapSkeletonPointToDepthPoint(me.Joints[JointType.ShoulderCenter].Position, DepthImageFormat.Resolution640x480Fps30);
+                DepthImagePoint ShoulderLeftDepthPoint = sensor.CoordinateMapper.MapSkeletonPointToDepthPoint(me.Joints[JointType.ShoulderLeft].Position, DepthImageFormat.Resolution640x480Fps30);
+                DepthImagePoint ShoulderRightDepthPoint = sensor.CoordinateMapper.MapSkeletonPointToDepthPoint(me.Joints[JointType.ShoulderRight].Position, DepthImageFormat.Resolution640x480Fps30);
                 DepthImagePoint HipCenterDepthPoint = sensor.CoordinateMapper.MapSkeletonPointToDepthPoint(me.Joints[JointType.HipCenter].Position, DepthImageFormat.Resolution640x480Fps30);
 
                 ColorImagePoint headColorPoint = sensor.CoordinateMapper.MapDepthPointToColorPoint(DepthImageFormat.Resolution640x480Fps30, headDepthPoint, ColorImageFormat.RgbResolution640x480Fps30);
@@ -212,15 +201,9 @@ namespace Kinect_Project
                 ColorImagePoint rHandColorPoint = sensor.CoordinateMapper.MapDepthPointToColorPoint(DepthImageFormat.Resolution640x480Fps30, lHandDepthPoint, ColorImageFormat.RgbResolution640x480Fps30);
                 ColorImagePoint spineColorPoint = sensor.CoordinateMapper.MapDepthPointToColorPoint(DepthImageFormat.Resolution640x480Fps30, spineDepthPoint, ColorImageFormat.RgbResolution640x480Fps30);
                 ColorImagePoint ShoulderCenterColorPoint = sensor.CoordinateMapper.MapDepthPointToColorPoint(DepthImageFormat.Resolution640x480Fps30, ShoulderCenterDepthPoint, ColorImageFormat.RgbResolution640x480Fps30);
+                ColorImagePoint ShoulderLeftColorPoint = sensor.CoordinateMapper.MapDepthPointToColorPoint(DepthImageFormat.Resolution640x480Fps30, ShoulderLeftDepthPoint, ColorImageFormat.RgbResolution640x480Fps30);
+                ColorImagePoint ShoulderRightColorPoint = sensor.CoordinateMapper.MapDepthPointToColorPoint(DepthImageFormat.Resolution640x480Fps30, ShoulderRightDepthPoint, ColorImageFormat.RgbResolution640x480Fps30);
                 ColorImagePoint HipCenterColorPoint = sensor.CoordinateMapper.MapDepthPointToColorPoint(DepthImageFormat.Resolution640x480Fps30, HipCenterDepthPoint, ColorImageFormat.RgbResolution640x480Fps30);
-
-                //  System.Console.WriteLine("Spine" + headColorPoint.X);
-                //System.Console.WriteLine("RightHand" + rHandColorPoint.X);
-                // System.Console.WriteLine("LeftHand" + lHandColorPoint.X);
-                // System.Console.WriteLine("RH Difference" + (rHandColorPoint.X - headColorPoint.X));
-                // System.Console.WriteLine("LH Difference" + (headColorPoint.X - lHandColorPoint.X));
-                // System.Console.WriteLine("RH Difference" + (rHandColorPoint.Y - headColorPoint.Y));
-
 
                 //make a region for follow
                 int stopRegionXShort = spineColorPoint.X - 130;
@@ -233,6 +216,7 @@ namespace Kinect_Project
                 //   && (rHandColorPoint.Y < stopRegionYShort) && ((lHandColorPoint.X < stopRegionXMax) && (lHandColorPoint.X > stopRegionXShort)
                 //  && (lHandColorPoint.Y > stopRegionYMax) && (lHandColorPoint.Y < stopRegionYShort))))
                 //{
+
                 //Move dots along with hands
                 Canvas.SetLeft(BlackDot, ((rHandColorPoint.X - BlackDot.Width / 2)));
                 Canvas.SetTop(BlackDot, (rHandColorPoint.Y) - BlackDot.Width / 2);
@@ -241,58 +225,60 @@ namespace Kinect_Project
                 Canvas.SetTop(WhiteDot, (lHandColorPoint.Y) - WhiteDot.Width / 2);
 
 
-
-
-                //both hands to right of the x of spine, in between the Y of shouldercenter and hip center
-                if ((rHandColorPoint.X > spineColorPoint.X) && (lHandColorPoint.X > spineColorPoint.X) &&
+                //Both hands to right of the x of spine, in between the Y of shouldercenter and hip center
+                if ((rHandColorPoint.X > ShoulderRightColorPoint.X) && (lHandColorPoint.X > ShoulderRightColorPoint.X) &&
                     (rHandColorPoint.Y < HipCenterColorPoint.Y) && (lHandColorPoint.Y < HipCenterColorPoint.Y) &&
                     (rHandColorPoint.Y > ShoulderCenterColorPoint.Y) && (lHandColorPoint.Y > ShoulderCenterColorPoint.Y))
-                    {
+                {
                         //Console.WriteLine("\nSpeech Recognized: \t{0}\tConfidence:\t{1}");
-
-                        Console.Write("\nMove Right");
+                        Console.Write("\nMove Positive Horizontal (Right)");
                         SendKeys.SendWait("{F3}");
+                }
 
-                       // Canvas.SetLeft(Fox, ((rHandColorPoint.X - Fox.Width / 2)));
-                       // Canvas.SetTop(Fox, (rHandColorPoint.Y) - Fox.Width / 2);
-                    }
-
-                    //both hands to left
-                    else if ((rHandColorPoint.X < headColorPoint.X) && (lHandColorPoint.X < headColorPoint.X) &&
-                       (rHandColorPoint.Y > headColorPoint.Y) && (lHandColorPoint.Y > headColorPoint.Y))
-                    {
-                       // Canvas.SetLeft(Fox, ((lHandColorPoint.X - Fox.Width / 2)));
-                        //Canvas.SetTop(Fox, (lHandColorPoint.Y) - Fox.Width / 2);
-                        // Console.WriteLine("\nSpeech Recognized: \t{0}\tConfidence:\t{1}");
-
-                        Console.Write("\nMove Left");
-                        SendKeys.SendWait("{F1}");
-                    }
-
-
-                    else
-                    {
-                        //Canvas.SetLeft(Fox, (headColorPoint.X) - Fox.Width / 2);
-                    }
-
-                    if ((rHandColorPoint.Y < headColorPoint.Y) && (lHandColorPoint.Y < headColorPoint.Y))
-                    {
-                       // Canvas.SetLeft(Fox, (headColorPoint.X) - Fox.Width / 2);
-                       // Canvas.SetTop(Fox, (headColorPoint.Y) - Fox.Width / 2);
+                //Both hands to left of the x of spine, in between the Y of shouldercenter and hip center
+                else if ((rHandColorPoint.X < ShoulderLeftColorPoint.X) && (lHandColorPoint.X < ShoulderLeftColorPoint.X) &&
+                       (rHandColorPoint.Y < HipCenterColorPoint.Y) && (lHandColorPoint.Y < HipCenterColorPoint.Y) &&
+                       (rHandColorPoint.Y > ShoulderCenterColorPoint.Y) && (lHandColorPoint.Y > ShoulderCenterColorPoint.Y))
+                {
                         //Console.WriteLine("\nSpeech Recognized: \t{0}\tConfidence:\t{1}");
+                        Console.Write("\nMove Negative Horizonatal (Left)");
+                        SendKeys.SendWait("{F1}");
+                }
 
-                        Console.Write("\nSTOP");
-                        SendKeys.SendWait("{F5}");
-                    }
+                //Both hands in between X of Shoulder left and right, Y above Shoulder center
+                else if ((rHandColorPoint.Y < ShoulderCenterColorPoint.Y) && (lHandColorPoint.Y < ShoulderCenterColorPoint.Y) &&
+                       (rHandColorPoint.X > ShoulderLeftColorPoint.X) && (lHandColorPoint.X > ShoulderLeftColorPoint.X) &&
+                       (rHandColorPoint.X < ShoulderRightColorPoint.X) && (lHandColorPoint.X < ShoulderRightColorPoint.X))
+                {
+                        //Console.WriteLine("\nSpeech Recognized: \t{0}\tConfidence:\t{1}");
+                        Console.Write("\nMove Positive Vertical (Up)");
+                        SendKeys.SendWait("{F4}");
+                }
 
-              //  }
+                //Both hands in between X of Shoulder left and right, Y below Hip Center
+                else if ((rHandColorPoint.Y > HipCenterColorPoint.Y) && (lHandColorPoint.Y > HipCenterColorPoint.Y) &&
+                       (rHandColorPoint.X > ShoulderLeftColorPoint.X) && (lHandColorPoint.X > ShoulderLeftColorPoint.X) &&
+                       (rHandColorPoint.X < ShoulderRightColorPoint.X) && (lHandColorPoint.X < ShoulderRightColorPoint.X))
+                {
+                    //Console.WriteLine("\nSpeech Recognized: \t{0}\tConfidence:\t{1}");
+                    Console.Write("\nMove Negative Vertical (Down)");
+                    SendKeys.SendWait("{F2}");
+                }
 
+                //Both hands inbetween X of Shoulder left and right, Y below shoulder center and above Hip center
+                else if ((rHandColorPoint.Y < HipCenterColorPoint.Y) && (lHandColorPoint.Y < HipCenterColorPoint.Y) &&
+                       (rHandColorPoint.Y > ShoulderCenterColorPoint.Y) && (lHandColorPoint.Y > ShoulderCenterColorPoint.Y) &&
+                       (rHandColorPoint.X > ShoulderLeftColorPoint.X) && (lHandColorPoint.X > ShoulderLeftColorPoint.X) &&
+                       (rHandColorPoint.X < ShoulderRightColorPoint.X) && (lHandColorPoint.X < ShoulderRightColorPoint.X))
+                {
+                    //Console.WriteLine("\nSpeech Recognized: \t{0}\tConfidence:\t{1}");
+                    Console.Write("\nSTOP");
+                    SendKeys.SendWait("{F5}");
+                }
 
-                //Canvas.SetTop(Fox, (headColorPoint.Y - Fox.Height / 2) - (rHandColorPoint.X - Fox.Width / 2) / 2);
+                //  }
             }
         }
-
-
 
         /// <summary>
         /// Execute shutdown tasks
@@ -303,12 +289,5 @@ namespace Kinect_Project
         {
             sensor.Stop();
         }
-
     }
-
-    //enum CameraMode
-    //{
-    //    Color,
-     //   Depth
-   // }
 }
