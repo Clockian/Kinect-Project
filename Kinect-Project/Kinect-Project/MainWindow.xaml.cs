@@ -240,54 +240,6 @@ namespace Kinect_Project
                     Console.Write("\nSTOP");
                     SendKeys.SendWait("{F5}");
                 }
-                
-                //Go-To 6 - Right hand to the right of Right Shoulder above Right shoulder, same with left on left shoulder
-                else if ((rHandColorPoint.X < ShoulderRightColorPoint.X) && (lHandColorPoint.X > ShoulderLeftColorPoint.X) &&
-                       (rHandColorPoint.Y < ShoulderRightColorPoint.Y) && (lHandColorPoint.Y < ShoulderLeftColorPoint.Y))
-                {
-                    Console.Write("\nGo-To 6");
-                    SendKeys.SendWait("{F6}");
-                }
-                
-                //Go-To 7 - Right hand above and to the Right of Right Shoulder, Left hand below Left shoulder
-                else if ((rHandColorPoint.X < ShoulderRightColorPoint.X) && //lHand.X doesn't matter
-                       (rHandColorPoint.Y < ShoulderRightColorPoint.Y) && (lHandColorPoint.Y > ShoulderLeftColorPoint.Y))
-                {
-                    Console.Write("\nGo-To 7!!");
-                    SendKeys.SendWait("{F7}");
-                }
-                
-                //Go-To 8 - Left hand above and to the Left of Left Shoulder, Right hand below Right shoulder
-                else if ((lHandColorPoint.X > ShoulderLeftColorPoint.X) && //rHand.X doesn't matter)
-                       (rHandColorPoint.Y > ShoulderRightColorPoint.Y) && (lHandColorPoint.Y < ShoulderLeftColorPoint.Y))
-                {
-                    Console.Write("\nGo-To 8***");
-                    SendKeys.SendWait("{F8}");
-                } 
-                
-                //Set 6 - Right hand to the right of and below Right Hip, same with left on left hip
-                else if ((rHandColorPoint.X < HipRightColorPoint.X) && (lHandColorPoint.X > HipLeftColorPoint.X) &&
-                       (rHandColorPoint.Y > HipRightColorPoint.Y) && (lHandColorPoint.Y > HipLeftColorPoint.Y))
-                {
-                    Console.Write("\nSet 6");
-                    SendKeys.SendWait("{F9}");
-                }
-
-                //Set 7 - Right hand below and to the Right of Right hip, Left hand above Left hip
-                else if ((rHandColorPoint.X < HipRightColorPoint.X) && //lHand.X doesn't matter
-                       (rHandColorPoint.Y > HipRightColorPoint.Y) && (lHandColorPoint.Y < HipLeftColorPoint.Y))
-                {
-                    Console.Write("\nSet 7!!");
-                    SendKeys.SendWait("{F10}");
-                }
-
-                //Set 8 - Left hand below and to the Left of Left hip, Right hand above Right hip
-                else if ((lHandColorPoint.X > HipLeftColorPoint.X) && //rHand.X doesn't matter)
-                       (rHandColorPoint.Y < HipRightColorPoint.Y) && (lHandColorPoint.Y > HipLeftColorPoint.Y))
-                {
-                    Console.Write("\nSet 8***");
-                    SendKeys.SendWait("{F11}");
-                }
             }
         }
 
