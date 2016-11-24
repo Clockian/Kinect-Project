@@ -278,7 +278,7 @@ namespace Kinect_Project
                        (rHandColorPoint.Y > HipRightColorPoint.Y) && (lHandColorPoint.Y < HipLeftColorPoint.Y))
                 {
                     Console.Write("\nSet 7!!");
-                    SendKeys.SendWait("{F7}");
+                    SendKeys.SendWait("{F10}");
                 }
 
                 //Set 8 - Left hand below and to the Left of Left hip, Right hand above Right hip
@@ -286,7 +286,7 @@ namespace Kinect_Project
                        (rHandColorPoint.Y < HipRightColorPoint.Y) && (lHandColorPoint.Y > HipLeftColorPoint.Y))
                 {
                     Console.Write("\nSet 8***");
-                    SendKeys.SendWait("{F8}");
+                    SendKeys.SendWait("{F11}");
                 }
             }
         }
