@@ -14,3 +14,4 @@ C:\Users\Clockian\Documents\GitHub\Kinect-Project\Kinect-Project\Kinect-Project\
 C:\Users\Clockian\Documents\GitHub\Kinect-Project\Kinect-Project\Kinect-Project\obj\Debug\Kinect-Project.csproj.GenerateResource.Cache
 C:\Users\Clockian\Documents\GitHub\Kinect-Project\Kinect-Project\Kinect-Project\obj\Debug\Kinect-Project.exe
 C:\Users\Clockian\Documents\GitHub\Kinect-Project\Kinect-Project\Kinect-Project\obj\Debug\Kinect-Project.pdb
+C:\Users\Clockian\Documents\GitHub\Kinect-Project\Kinect-Project\Kinect-Project\bin\Debug\Microsoft.Speech.dll

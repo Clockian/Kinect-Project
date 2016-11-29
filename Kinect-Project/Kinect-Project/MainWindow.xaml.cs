@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -11,9 +12,14 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Threading;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Forms;
+//using System.Speech.Recognition;
+//using System.Speech.AudioFormat;
+using Microsoft.Speech.Recognition;
+using Microsoft.Speech.AudioFormat;
 
 namespace Kinect_Project
 {
@@ -36,6 +42,22 @@ namespace Kinect_Project
         /// Intermediate storage for the skeleton data received from the Kinect sensor.
         /// </summary>
         Skeleton[] allSkeletons = new Skeleton[SKELETON_COUNT];
+
+        /// <summary>
+        /// Speech recognition engine using audio data from Kinect.
+        /// </summary>
+        private SpeechRecognitionEngine speechEngine;
+
+        /// <summary>
+        /// Gets audio from sensor
+        /// </summary>
+        private KinectAudioSource source;
+
+        /// <summary>
+        /// Streams audio from sensor
+        /// </summary>
+        private Stream stream;
+
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MainWindow"/> class.
@@ -153,7 +175,6 @@ namespace Kinect_Project
                 {
                     return;
                 }
-
                 //Setting up Skeleton Points to use
                 DepthImagePoint headDepthPoint = sensor.CoordinateMapper.MapSkeletonPointToDepthPoint(me.Joints[JointType.Head].Position, DepthImageFormat.Resolution640x480Fps30);
                 DepthImagePoint rHandDepthPoint = sensor.CoordinateMapper.MapSkeletonPointToDepthPoint(me.Joints[JointType.HandRight].Position, DepthImageFormat.Resolution640x480Fps30);
@@ -240,6 +261,15 @@ namespace Kinect_Project
                     Console.Write("\nSTOP");
                     SendKeys.SendWait("{F5}");
                 }
+
+                //Go-To 6 - Right hand to the right of Right Shoulder above Right shoulder, same with left on left shoulder
+                else if ((rHandColorPoint.X < ShoulderRightColorPoint.X) && (lHandColorPoint.X > ShoulderLeftColorPoint.X) &&
+                       (rHandColorPoint.Y < ShoulderRightColorPoint.Y) && (lHandColorPoint.Y < ShoulderLeftColorPoint.Y))
+                {
+                    Console.Write("\nAudio Activate");
+                    AudioReadingThread();
+                }
+
             }
         }
 
@@ -252,5 +282,116 @@ namespace Kinect_Project
         {
             sensor.Stop();
         }
+        
+        /// <summary>
+        /// Gets the metadata for the speech recognizer (acoustic model) most suitable to
+        /// process audio from Kinect device.
+        /// </summary>
+        /// <returns>
+        /// RecognizerInfo if found, <code>null</code> otherwise.
+        /// </returns>
+        private static RecognizerInfo GetKinectRecognizer()
+        {
+            foreach (RecognizerInfo recognizer in SpeechRecognitionEngine.InstalledRecognizers())
+            {
+                string value;
+                recognizer.AdditionalInfo.TryGetValue("Kinect", out value);
+                if ("True".Equals(value, StringComparison.OrdinalIgnoreCase) && "en-US".Equals(recognizer.Culture.Name, StringComparison.OrdinalIgnoreCase))
+                {
+                    return recognizer;
+                }
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// Handles polling audio stream and updating visualization every tick.
+        /// </summary>
+        private void AudioReadingThread()
+        {
+            try
+            {
+                source = this.sensor.AudioSource;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("{0} Exception caught.", e);
+            }
+
+            RecognizerInfo ri = GetKinectRecognizer();
+            Console.Write("\nIn AudioReadingThread\n");
+
+            using (var sre = new SpeechRecognitionEngine(ri.Id))
+            {
+                this.speechEngine = new SpeechRecognitionEngine(ri.Id);
+
+                var command = new Choices();
+                command.Add("Move Left");
+                command.Add("Move Down");
+                command.Add("Move Right");
+                command.Add("Move Up");
+                command.Add("STOP");
+
+                var gb = new GrammarBuilder();
+                gb.Culture = ri.Culture;
+                gb.Append(command);
+
+                var g = new Grammar(gb);
+
+                speechEngine.LoadGrammar(g);
+
+                speechEngine.SpeechRecognized += new EventHandler<SpeechRecognizedEventArgs>(SpeechRecognized);
+
+                stream = source.Start();
+
+                speechEngine.SetInputToAudioStream(
+                    stream, new SpeechAudioFormatInfo(EncodingFormat.Pcm, 16000, 16, 1, 32000, 2, null));
+
+                speechEngine.RecognizeAsync(RecognizeMode.Multiple);               
+            }
+        }
+
+        private static void SpeechRecognized(object sender, SpeechRecognizedEventArgs e)
+        {
+            Console.Write("\nIn SpeechRecognized\n");
+            if (e.Result.Confidence >= 0.7)
+            {
+                Console.WriteLine("\nSpeech Recognized: \t{0}\tConfidence:\t{1}", e.Result.Text, e.Result.Confidence);
+                switch (e.Result.Text)
+                {
+
+                    case "Move Left":
+                        Console.Write("Speech - Move Left");
+                        SendKeys.SendWait("{F1}");
+                        break;
+
+                    case "Move Down":
+                        Console.Write("Speech - Move Left");
+                        SendKeys.SendWait("{F2}");
+                        break;
+
+                    case "Move Right":
+                        Console.Write("Speech - Move Right");
+                        SendKeys.SendWait("{F3}");
+                        break;
+
+                    case "Move Up":
+                        Console.Write("Speech - Move Up");
+                        SendKeys.SendWait("{F4}");
+                        break;
+
+                    case "STOP":
+                        Console.Write("Speech - STOP");
+                        SendKeys.SendWait("{F5}");
+                        break;
+                }
+            }
+            else
+            {
+                Console.WriteLine("\nSpeech Recognized but confidence was too low: \t{0}", e.Result.Confidence);
+            }
+        }
+        
     }
 }
