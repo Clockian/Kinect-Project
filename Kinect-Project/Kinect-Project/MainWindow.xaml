@@ -9,11 +9,11 @@
     <Grid>
         <Canvas HorizontalAlignment="Left" Height="480" Margin="0,0,0,-9.6" VerticalAlignment="Top" Width="640">
             <Image x:Name="Vid" HorizontalAlignment="Left" Height="480" VerticalAlignment="Top" Width="640" Loaded="Window_Loaded"/>
-            <Image x:Name="BlackDot" HorizontalAlignment="Left" Height="22" VerticalAlignment="Top" Width="22" Source="C:\Users\Clockian\Documents\GitHub\Kinect-Project\black-dot.png" Canvas.Left="143" Canvas.Top="194" RenderTransformOrigin="0.59,2.488" />
-            <Image x:Name="WhiteDot" HorizontalAlignment="Left" Height="22" VerticalAlignment="Top" Width="22" Source="C:\Users\Clockian\Documents\GitHub\Kinect-Project\white-dot.png" Canvas.Left="353" Canvas.Top="200" RenderTransformOrigin="0.59,2.488" />
-            <Image x:Name="RedDotRight" HorizontalAlignment="Left" Height="14" VerticalAlignment="Top" Width="14" Source="C:\Users\Clockian\Documents\GitHub\Kinect-Project\red-dot.png" Canvas.Left="353" Canvas.Top="112" RenderTransformOrigin="0.59,2.488" />
-            <Image x:Name="RedDotHip" HorizontalAlignment="Left" Height="14" VerticalAlignment="Top" Width="14" Source="C:\Users\Clockian\Documents\GitHub\Kinect-Project\red-dot.png" Canvas.Left="293" Canvas.Top="294" RenderTransformOrigin="0.59,2.488" />
-            <Image x:Name="RedDotLeft" HorizontalAlignment="Left" Height="14" VerticalAlignment="Top" Width="14" Source="C:\Users\Clockian\Documents\GitHub\Kinect-Project\red-dot.png" Canvas.Left="229" Canvas.Top="112" RenderTransformOrigin="0.59,2.488" />
+            <Image x:Name="BlackDot" HorizontalAlignment="Left" Height="22" VerticalAlignment="Top" Width="22" Source="C:\Users\Jasque\Desktop\Kinect-Project-test\black-dot.png" Canvas.Left="143" Canvas.Top="194" RenderTransformOrigin="0.59,2.488" />
+            <Image x:Name="WhiteDot" HorizontalAlignment="Left" Height="22" VerticalAlignment="Top" Width="22" Source="C:\Users\Jasque\Desktop\Kinect-Project-test\white-dot.png" Canvas.Left="353" Canvas.Top="200" RenderTransformOrigin="0.59,2.488" />
+            <Image x:Name="RedDotRight" HorizontalAlignment="Left" Height="14" VerticalAlignment="Top" Width="14" Source="C:\Users\Jasque\Desktop\Kinect-Project-test\red-dot.png" Canvas.Left="353" Canvas.Top="112" RenderTransformOrigin="0.59,2.488" />
+            <Image x:Name="RedDotHip" HorizontalAlignment="Left" Height="14" VerticalAlignment="Top" Width="14" Source="C:\Users\Jasque\Desktop\Kinect-Project-test\red-dot.png" Canvas.Left="293" Canvas.Top="294" RenderTransformOrigin="0.59,2.488" />
+            <Image x:Name="RedDotLeft" HorizontalAlignment="Left" Height="14" VerticalAlignment="Top" Width="14" Source="C:\Users\Jasque\Desktop\Kinect-Project-test\red-dot.png" Canvas.Left="229" Canvas.Top="112" RenderTransformOrigin="0.59,2.488" />
         </Canvas>
     </Grid>
 </Window>

@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -11,9 +12,14 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Threading;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Forms;
+//using System.Speech.Recognition;
+//using System.Speech.AudioFormat;
+using Microsoft.Speech.Recognition;
+using Microsoft.Speech.AudioFormat;
 
 namespace Kinect_Project
 {
@@ -36,6 +42,22 @@ namespace Kinect_Project
         /// Intermediate storage for the skeleton data received from the Kinect sensor.
         /// </summary>
         Skeleton[] allSkeletons = new Skeleton[SKELETON_COUNT];
+
+        /// <summary>
+        /// Speech recognition engine using audio data from Kinect.
+        /// </summary>
+        private SpeechRecognitionEngine speechEngine;
+
+        /// <summary>
+        /// Gets audio from sensor
+        /// </summary>
+        private KinectAudioSource source;
+
+        /// <summary>
+        /// Streams audio from sensor
+        /// </summary>
+        private Stream stream;
+
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MainWindow"/> class.
@@ -153,7 +175,6 @@ namespace Kinect_Project
                 {
                     return;
                 }
-
                 //Setting up Skeleton Points to use
                 DepthImagePoint headDepthPoint = sensor.CoordinateMapper.MapSkeletonPointToDepthPoint(me.Joints[JointType.Head].Position, DepthImageFormat.Resolution640x480Fps30);
                 DepthImagePoint rHandDepthPoint = sensor.CoordinateMapper.MapSkeletonPointToDepthPoint(me.Joints[JointType.HandRight].Position, DepthImageFormat.Resolution640x480Fps30);
@@ -165,6 +186,9 @@ namespace Kinect_Project
                 DepthImagePoint HipCenterDepthPoint = sensor.CoordinateMapper.MapSkeletonPointToDepthPoint(me.Joints[JointType.HipCenter].Position, DepthImageFormat.Resolution640x480Fps30);
                 DepthImagePoint HipLeftDepthPoint = sensor.CoordinateMapper.MapSkeletonPointToDepthPoint(me.Joints[JointType.HipLeft].Position, DepthImageFormat.Resolution640x480Fps30);
                 DepthImagePoint HipRightDepthPoint = sensor.CoordinateMapper.MapSkeletonPointToDepthPoint(me.Joints[JointType.HipRight].Position, DepthImageFormat.Resolution640x480Fps30);
+                DepthImagePoint ElbowRightDepthPoint = sensor.CoordinateMapper.MapSkeletonPointToDepthPoint(me.Joints[JointType.ElbowRight].Position, DepthImageFormat.Resolution640x480Fps30);
+                DepthImagePoint ElbowLeftDepthPoint = sensor.CoordinateMapper.MapSkeletonPointToDepthPoint(me.Joints[JointType.ElbowLeft].Position, DepthImageFormat.Resolution640x480Fps30);
+
 
 
                 //Lines up Skeleton points to color video
@@ -178,6 +202,8 @@ namespace Kinect_Project
                 ColorImagePoint HipCenterColorPoint = sensor.CoordinateMapper.MapDepthPointToColorPoint(DepthImageFormat.Resolution640x480Fps30, HipCenterDepthPoint, ColorImageFormat.RgbResolution640x480Fps30);
                 ColorImagePoint HipLeftColorPoint = sensor.CoordinateMapper.MapDepthPointToColorPoint(DepthImageFormat.Resolution640x480Fps30, HipLeftDepthPoint, ColorImageFormat.RgbResolution640x480Fps30);
                 ColorImagePoint HipRightColorPoint = sensor.CoordinateMapper.MapDepthPointToColorPoint(DepthImageFormat.Resolution640x480Fps30, HipRightDepthPoint, ColorImageFormat.RgbResolution640x480Fps30);
+                ColorImagePoint ElbowRightColorPoint = sensor.CoordinateMapper.MapDepthPointToColorPoint(DepthImageFormat.Resolution640x480Fps30, ElbowRightDepthPoint, ColorImageFormat.RgbResolution640x480Fps30);
+                ColorImagePoint ElbowLeftColorPoint = sensor.CoordinateMapper.MapDepthPointToColorPoint(DepthImageFormat.Resolution640x480Fps30, ElbowLeftDepthPoint, ColorImageFormat.RgbResolution640x480Fps30);
 
                 //Move dots along with hands
                 Canvas.SetLeft(BlackDot, ((rHandColorPoint.X - BlackDot.Width / 2)));
@@ -240,7 +266,15 @@ namespace Kinect_Project
                     Console.Write("\nSTOP");
                     SendKeys.SendWait("{F5}");
                 }
-                
+
+                //Audio Activate - Arms Crossed up
+                else if ((rHandColorPoint.X > ElbowRightColorPoint.X) && (lHandColorPoint.X < ElbowLeftColorPoint.X) &&
+                       (rHandColorPoint.Y < (ShoulderRightColorPoint.Y - 50)) && (lHandColorPoint.Y < (ShoulderLeftColorPoint.Y - 50)))
+                {
+                    Console.Write("\nAudio Activate");
+                    AudioReadingThread();
+                }
+
                 //Go-To 6 - Right hand to the right of Right Shoulder above Right shoulder, same with left on left shoulder
                 else if ((rHandColorPoint.X < ShoulderRightColorPoint.X) && (lHandColorPoint.X > ShoulderLeftColorPoint.X) &&
                        (rHandColorPoint.Y < ShoulderRightColorPoint.Y) && (lHandColorPoint.Y < ShoulderLeftColorPoint.Y))
@@ -248,7 +282,7 @@ namespace Kinect_Project
                     Console.Write("\nGo-To 6");
                     SendKeys.SendWait("{F6}");
                 }
-                
+
                 //Go-To 7 - Right hand above and to the Right of Right Shoulder, Left hand below Left shoulder
                 else if ((rHandColorPoint.X < ShoulderRightColorPoint.X) && //lHand.X doesn't matter
                        (rHandColorPoint.Y < ShoulderRightColorPoint.Y) && (lHandColorPoint.Y > ShoulderLeftColorPoint.Y))
@@ -256,15 +290,15 @@ namespace Kinect_Project
                     Console.Write("\nGo-To 7!!");
                     SendKeys.SendWait("{F7}");
                 }
-                
+
                 //Go-To 8 - Left hand above and to the Left of Left Shoulder, Right hand below Right shoulder
                 else if ((lHandColorPoint.X > ShoulderLeftColorPoint.X) && //rHand.X doesn't matter)
                        (rHandColorPoint.Y > ShoulderRightColorPoint.Y) && (lHandColorPoint.Y < ShoulderLeftColorPoint.Y))
                 {
                     Console.Write("\nGo-To 8***");
                     SendKeys.SendWait("{F8}");
-                } 
-                
+                }
+
                 //Set 6 - Right hand to the right of and below Right Hip, same with left on left hip
                 else if ((rHandColorPoint.X < HipRightColorPoint.X) && (lHandColorPoint.X > HipLeftColorPoint.X) &&
                        (rHandColorPoint.Y > HipRightColorPoint.Y) && (lHandColorPoint.Y > HipLeftColorPoint.Y))
@@ -278,7 +312,7 @@ namespace Kinect_Project
                        (rHandColorPoint.Y > HipRightColorPoint.Y) && (lHandColorPoint.Y < HipLeftColorPoint.Y))
                 {
                     Console.Write("\nSet 7!!");
-                    SendKeys.SendWait("{F7}");
+                    SendKeys.SendWait("{F10}");
                 }
 
                 //Set 8 - Left hand below and to the Left of Left hip, Right hand above Right hip
@@ -286,8 +320,18 @@ namespace Kinect_Project
                        (rHandColorPoint.Y < HipRightColorPoint.Y) && (lHandColorPoint.Y > HipLeftColorPoint.Y))
                 {
                     Console.Write("\nSet 8***");
-                    SendKeys.SendWait("{F8}");
+                    SendKeys.SendWait("{F11}");
                 }
+
+                //Auto - Arms Crossed across body
+                else if ((rHandColorPoint.X > ElbowRightColorPoint.X) && (lHandColorPoint.X < ElbowLeftColorPoint.X) &&
+                        (rHandColorPoint.Y > ShoulderRightColorPoint.Y) && (lHandColorPoint.Y > ShoulderLeftColorPoint.Y) &&
+                        (rHandColorPoint.Y < HipRightColorPoint.Y) && (lHandColorPoint.Y < HipLeftColorPoint.Y))
+                {
+                    Console.Write("\nAutomatic");
+                    SendKeys.SendWait("{F12}");
+                }
+
             }
         }
 
@@ -300,5 +344,161 @@ namespace Kinect_Project
         {
             sensor.Stop();
         }
+        
+        /// <summary>
+        /// Gets the metadata for the speech recognizer (acoustic model) most suitable to
+        /// process audio from Kinect device.
+        /// </summary>
+        /// <returns>
+        /// RecognizerInfo if found, <code>null</code> otherwise.
+        /// </returns>
+        private static RecognizerInfo GetKinectRecognizer()
+        {
+            foreach (RecognizerInfo recognizer in SpeechRecognitionEngine.InstalledRecognizers())
+            {
+                string value;
+                recognizer.AdditionalInfo.TryGetValue("Kinect", out value);
+                if ("True".Equals(value, StringComparison.OrdinalIgnoreCase) && "en-US".Equals(recognizer.Culture.Name, StringComparison.OrdinalIgnoreCase))
+                {
+                    return recognizer;
+                }
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// Handles polling audio stream and updating visualization every tick.
+        /// </summary>
+        private void AudioReadingThread()
+        {
+            try
+            {
+                source = this.sensor.AudioSource;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("{0} Exception caught.", e);
+            }
+
+            RecognizerInfo ri = GetKinectRecognizer();
+            Console.Write("\nIn AudioReadingThread\n");
+
+            using (var sre = new SpeechRecognitionEngine(ri.Id))
+            {
+                this.speechEngine = new SpeechRecognitionEngine(ri.Id);
+
+                var command = new Choices();
+                command.Add("Move Left");
+                command.Add("Move Down");
+                command.Add("Move Right");
+                command.Add("Move Up");
+                command.Add("STOP");
+
+                command.Add("Go To Six");     //F6
+                command.Add("Go To Seven");   //F7
+                command.Add("Go To Eight");   //F8
+
+                command.Add("Set Six");     //F9
+                command.Add("Set Seven");   //F10
+                command.Add("Set Eight");   //F11
+
+                command.Add("Automatic");   //F12
+
+                var gb = new GrammarBuilder();
+                gb.Culture = ri.Culture;
+                gb.Append(command);
+
+                var g = new Grammar(gb);
+
+                speechEngine.LoadGrammar(g);
+
+                speechEngine.SpeechRecognized += new EventHandler<SpeechRecognizedEventArgs>(SpeechRecognized);
+
+                stream = source.Start();
+
+                speechEngine.SetInputToAudioStream(
+                    stream, new SpeechAudioFormatInfo(EncodingFormat.Pcm, 16000, 16, 1, 32000, 2, null));
+
+                speechEngine.RecognizeAsync(RecognizeMode.Multiple);               
+            }
+        }
+
+        private static void SpeechRecognized(object sender, SpeechRecognizedEventArgs e)
+        {
+            Console.Write("\nIn SpeechRecognized\n");
+            if (e.Result.Confidence >= 0.7)
+            {
+                Console.WriteLine("\nSpeech Recognized: \t{0}\tConfidence:\t{1}", e.Result.Text, e.Result.Confidence);
+                switch (e.Result.Text)
+                {
+
+                    case "Move Left":
+                        Console.Write("Speech - Move Left");
+                        SendKeys.SendWait("{F1}");
+                        break;
+
+                    case "Move Down":
+                        Console.Write("Speech - Move Left");
+                        SendKeys.SendWait("{F2}");
+                        break;
+
+                    case "Move Right":
+                        Console.Write("Speech - Move Right");
+                        SendKeys.SendWait("{F3}");
+                        break;
+
+                    case "Move Up":
+                        Console.Write("Speech - Move Up");
+                        SendKeys.SendWait("{F4}");
+                        break;
+
+                    case "STOP":
+                        Console.Write("Speech - STOP");
+                        SendKeys.SendWait("{F5}");
+                        break;
+
+                    case "Go To Six":
+                        Console.Write("Go To Six");
+                        SendKeys.SendWait("{F6}");
+                        break;
+
+                    case "Go To Seven":
+                        Console.Write("Go To Seven");
+                        SendKeys.SendWait("{F7}");
+                        break;
+
+                    case "Go To Eight":
+                        Console.Write("Go To Eight");
+                        SendKeys.SendWait("{F8}");
+                        break;
+
+                    case "Set Six":
+                        Console.Write("Set Six");
+                        SendKeys.SendWait("{F9}");
+                        break;
+
+                    case "Set Seven":
+                        Console.Write("Set Seven");
+                        SendKeys.SendWait("{F10}");
+                        break;
+
+                    case "Set Eight":
+                        Console.Write("Set Eight");
+                        SendKeys.SendWait("{F11}");
+                        break;
+
+                    case "Automatic":
+                        Console.Write("Automatic");
+                        SendKeys.SendWait("{F12}");
+                        break;
+                }
+            }
+            else
+            {
+                Console.WriteLine("\nSpeech Recognized but confidence was too low: \t{0}", e.Result.Confidence);
+            }
+        }
+        
     }
 }
